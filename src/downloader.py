@@ -13,7 +13,7 @@ def download_high(tag, count, max_video, video, path):
     pytube.YouTube(video, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download(output_path=f'{path}/temp/', max_retries=500, skip_existing=True, filename=f'{title}.webm')
     fps = int(pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).fps)
     
-    print("Going to combine video and audio.")
+    print("Merging video and audio.")
 
     source_video = ffmpeg.input(f'{path}/temp/{title}.mp4').filter('fps', fps=fps, round='up')
     source_audio = ffmpeg.input(f'{path}/temp/{title}.webm')
