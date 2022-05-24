@@ -15,6 +15,7 @@ def get_max_video(c):
 def main():
     welcome_the_user()
     c = None
+    path = None
 
     while 42:
         url = str(input("insert the url: "))
@@ -28,7 +29,8 @@ def main():
 
     root = Tk()
     root.withdraw()
-    path = askdirectory(title='Select Working Directory')
+    while (os.path.isdir(f'{path}') == False):
+        path = askdirectory(title='Select Working Directory')
     print(f'Working Directory: {path}')
 
     if (os.path.isdir(f'{path}/video_output') == False):
