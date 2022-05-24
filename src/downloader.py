@@ -2,22 +2,25 @@ from resolution import find_high_resolution
 from pytube.cli import on_progress
 import shutil, ffmpeg, os, pytube
 
-def download_high(c, count, max_video, video):
+def download_high(tag, count, max_video, video, path):
     total, used, free = shutil.disk_usage('/')
     
     link = pytube.YouTube(video)
-    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(137).download(output_path='./temp/', max_retries=500, skip_existing=True, filename=f'{link.title}.mp4')
-    pytube.YouTube(video, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download(output_path='./temp/', max_retries=500, skip_existing=True, filename=f'{link.title}.webm')
+    print(f'Downloading Video: {link.title}.mp4')
+    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=f'{path}/temp/', max_retries=500, skip_existing=True, filename=f'{link.title}.mp4')
+    print(f'Downloading Audio: {link.title}.webm')
+    pytube.YouTube(video, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download(output_path=f'{path}/temp/', max_retries=500, skip_existing=True, filename=f'{link.title}.webm')
+    fps = int(pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).fps)
     
     print("Going to combine video and audio.")
 
-    source_video = ffmpeg.input(f'./temp/{link.title}.mp4')
-    source_audio = ffmpeg.input(f'./temp/{link.title}.webm')
-    output_video = f'./video_output/{link.title}.mp4'
+    source_video = ffmpeg.input(f'{path}/temp/{link.title}.mp4').filter('fps', fps=fps, round='up')
+    source_audio = ffmpeg.input(f'{path}/temp/{link.title}.webm')
+    output_video = f'{path}/video_output/{link.title}.mp4'
     
     ffmpeg.output(source_video, source_audio, output_video).run()
     
-    size = link.streams.get_by_itag(137).filesize
+    size = link.streams.get_by_itag(tag.itag).filesize
     usage = ((free - size) // (2**30))
     max_disk = ((total) // (2**30))
     print('The video is downloaded.')
@@ -25,12 +28,12 @@ def download_high(c, count, max_video, video):
     count += 1
     print(f'You have download {count} of {max_video}.')
     
-    os.remove(f'./temp/{link.title}.mp4')
-    os.remove(f'./temp/{link.title}.webm')
+    os.remove(f'{path}/temp/{link.title}.mp4')
+    os.remove(f'{path}/temp/{link.title}.webm')
     
     return count
 
-def download_video(c, count, max_video):
+def download_video(c, count, max_video, path):
     
     for video in c.video_urls:
         total, used, free = shutil.disk_usage('/')
@@ -42,11 +45,11 @@ def download_video(c, count, max_video):
                 tag = None
             
             if tag != None:
-                print(f'Downloading: {link.title}')
                 if tag.resolution == "1080p":
-                    count = download_high(c, count, max_video, video)
+                    count = download_high(tag, count, max_video, video, path)
                 else:
-                    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path='./video_output/', max_retries=500, skip_existing=True)
+                    print(f'Downloading Video with Audio: {link.title}.mp4')
+                    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=f'{path}/video_output/', max_retries=500, skip_existing=True)
                     size = link.streams.get_by_itag(tag.itag).filesize
                     usage = ((free - size) // (2**30))
                     max_disk = ((total) // (2**30))

@@ -2,6 +2,18 @@ def find_high_resolution(link):
     if link.streams.filter().get_by_itag(137) != None:
         print('Find: 1080p')
         return link.streams.filter().get_by_itag(137)
+    elif link.streams.filter().get_by_itag(248) != None:
+        print('Find: 1080p')
+        return link.streams.filter().get_by_itag(248)
+    elif link.streams.filter().get_by_itag(299) != None:
+        print('Find: 1080p')
+        return link.streams.filter().get_by_itag(299)
+    elif link.streams.filter().get_by_itag(303) != None:
+        print('Find: 1080p')
+        return link.streams.filter().get_by_itag(303)
+    elif link.streams.filter().get_by_itag(399) != None:
+        print('Find: 1080p')
+        return link.streams.filter().get_by_itag(399)
     elif link.streams.filter(progressive=True).get_by_resolution("720p") != None:
         print('Find: 720p')
         return link.streams.filter(progressive=True).get_by_resolution("720p")
