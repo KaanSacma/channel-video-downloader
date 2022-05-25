@@ -24,7 +24,7 @@ def download_high(tag, count, max_video, video, path):
     source_audio = ffmpeg.input(audio_temp)
     output_video = r"{0}/video_output/{1}.mp4".format(path, link.title)
     
-    ffmpeg.output(source_video, source_audio, output_video, f='mp4').run()
+    ffmpeg.concat(source_video, source_audio, v=1, a=1).output(output_video).run()
     
     size = link.streams.get_by_itag(tag.itag).filesize
     usage = ((free - size) // (2**30))
@@ -54,8 +54,9 @@ def download_video(c, count, max_video, path):
                 if tag.resolution == "1080p":
                     count = download_high(tag, count, max_video, video, path)
                 else:
-                    print(f'Downloading Video with Audio: {link.title}.mp4')
-                    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=f'{path}/video_output/', max_retries=500, skip_existing=True)
+                    video_path = r"{0}/video_output/".format(path)
+                    print(r"Downloading Video with Audio: {0}.mp4".format(link.title))
+                    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=video_path, max_retries=500, skip_existing=True)
                     size = link.streams.get_by_itag(tag.itag).filesize
                     usage = ((free - size) // (2**30))
                     max_disk = ((total) // (2**30))

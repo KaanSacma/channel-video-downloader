@@ -29,15 +29,15 @@ def main():
 
     root = Tk()
     root.withdraw()
-    while (os.path.isdir(f'{path}') == False):
+    while (os.path.isdir(r"{0}".format(path)) == False):
         path = askdirectory(title='Select Working Directory')
-    print(f'Working Directory: {path}')
+    print(r"Working Directory: {0}".format(path))
 
-    if (os.path.isdir(f'{path}/video_output') == False):
-        os.mkdir(f'{path}/video_output')
-    if (os.path.isdir(f'{path}/temp') == False):
-        os.mkdir(f'{path}/temp')
-    print(f'Downloading videos by: {c.channel_name}')
+    if (os.path.isdir(r"{0}/video_output".format(path)) == False):
+        os.mkdir(r"{0}/video_output".format(path))
+    if (os.path.isdir(r"{0}/temp".format(path)) == False):
+        os.mkdir(r"{0}/temp".format(path))
+    print(r"Downloading videos by: {0}".format(c.channel_name))
 
     max_video = get_max_video(c)
     count = 0
@@ -45,7 +45,7 @@ def main():
     download_video(c, count, max_video, path)
 
     print('Done!')
-    os.rmdir(f'{path}/temp')
+    os.rmdir(r"{0}/temp".format(path))
 
 if __name__ == '__main__':
     main()
