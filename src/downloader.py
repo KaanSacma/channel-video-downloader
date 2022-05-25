@@ -6,18 +6,23 @@ def download_high(tag, count, max_video, video, path):
     total, used, free = shutil.disk_usage('/')
     
     link = pytube.YouTube(video)
-    title = link.title.replace(" ", "")
-    print(f'Downloading Video: {title}.mp4')
-    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=f'{path}/temp/', max_retries=500, skip_existing=True, filename=f'{title}.mp4')
-    print(f'Downloading Audio: {link.title}.webm')
-    pytube.YouTube(video, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download(output_path=f'{path}/temp/', max_retries=500, skip_existing=True, filename=f'{title}.webm')
+    temp = r"{0}/temp/".format(path)
+    video_temp = r"{0}/temp/{1}.mp4".format(path, link.title)
+    audio_temp = r"{0}/temp/{1}.webm".format(path, link.title)
+    video_file = r"{0}.mp4".format(link.title)
+    audio_file = r"{0}.webm".format(link.title)
+    
+    print("Downloading Video: {0}".format(video_file))
+    pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).download(output_path=temp, max_retries=500, skip_existing=True, filename=video_file)
+    print("Downloading Audio: {0}".format(audio_file))
+    pytube.YouTube(video, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download(output_path=temp, max_retries=500, skip_existing=True, filename=audio_file)
     fps = int(pytube.YouTube(video, on_progress_callback=on_progress).streams.get_by_itag(tag.itag).fps)
     
     print("Merging video and audio.")
 
-    source_video = ffmpeg.input(f'{path}/temp/{title}.mp4').filter('fps', fps=fps, round='up')
-    source_audio = ffmpeg.input(f'{path}/temp/{title}.webm')
-    output_video = f'{path}/video_output/{title}.mp4'
+    source_video = ffmpeg.input(video_temp).filter('fps', fps=fps, round='up')
+    source_audio = ffmpeg.input(audio_temp)
+    output_video = r"{0}/video_output/{1}.mp4".format(path, link.title)
     
     ffmpeg.output(source_video, source_audio, output_video, f='mp4').run()
     
@@ -29,8 +34,8 @@ def download_high(tag, count, max_video, video, path):
     count += 1
     print(f'You have download {count} of {max_video}.')
     
-    os.remove(f'{path}/temp/{link.title}.mp4')
-    os.remove(f'{path}/temp/{link.title}.webm')
+    os.remove(video_temp)
+    os.remove(audio_temp)
     
     return count
 
