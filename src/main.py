@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from tkinter import Tk
 from tkinter.filedialog import askdirectory
 from welcome import welcome_the_user
 from downloader import download_video
@@ -27,9 +26,6 @@ def main():
             print('retry.')
         if c != None:
             break
-
-    root = Tk()
-    root.withdraw()
     while (os.path.isdir(r"{0}".format(path)) == False):
         path = askdirectory(title='Select Working Directory')
     print(r"Working Directory: {0}".format(path))

@@ -25,9 +25,6 @@ def download_high(tag, count, max_video, video, path):
     output_video = r"{0}/video_output/{1}.mp4".format(path, link.title)
     execute_path = os.getcwd()
     
-    #if platform.system() == 'Windows':
-        #ffmpeg.concat(source_video, source_audio, v=1, a=1).output(output_video).run(cmd=r"{0}/ffmpeg/bin/ffmpeg.exe".format(execute_path))
-    
     size = link.streams.get_by_itag(tag.itag).filesize
     usage = ((free - size) // (2**30))
     max_disk = ((total) // (2**30))
