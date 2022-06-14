@@ -5,6 +5,7 @@ from tkinter.filedialog import askdirectory
 from welcome import welcome_the_user
 from downloader import download_video
 import pytube, os
+import logging as logger
 
 def get_max_video(c):
     counter = 0
